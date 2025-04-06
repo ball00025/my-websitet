@@ -1,98 +1,328 @@
-<html>
-	<head>
-		<title>Flower</title>
-		<style>
-			body {
-				margin: 0;
-				height: 100vh;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				background-color: burlywood;
-				flex-direction: column; /* Add flex-direction to stack the text and flower */
-			}
-			.wrapper {
-				width: 600px;
-				height: 600px;
-				position: relative;
-				animation: rotateFlower 20s linear infinite;
-			}
-			@keyframes rotateFlower {
-				0% {
-					transform: rotate(0deg);
-				}
-				100% {
-					transform: rotate(360deg);
-				}
-			}
-			.miolo {
-				width: 180px;
-				height: 180px;
-				border-radius: 50%;
-				background-color: goldenrod;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3);
-			}
-			.petal {
-				width: 120px;
-				height: 250px;
-				background-color: white;
-				border-radius: 45%;
-				position: absolute;
-				top: 40%;
-				left: 50%;
-				transform-origin: 51% 125%;
-				box-shadow: 8px 20px 16px rgba(0, 0, 0, 0.2);
-			}
-			.petal1 { transform: translate(-50%, -100%) rotate(0deg); }
-			.petal2 { transform: translate(-50%, -100%) rotate(36deg); }
-			.petal3 { transform: translate(-50%, -100%) rotate(72deg); }
-			.petal4 { transform: translate(-50%, -100%) rotate(108deg); }
-			.petal5 { transform: translate(-50%, -100%) rotate(144deg); }
-			.petal6 { transform: translate(-50%, -100%) rotate(180deg); }
-			.petal7 { transform: translate(-50%, -100%) rotate(216deg); }
-			.petal8 { transform: translate(-50%, -100%) rotate(252deg); }
-			.petal9 { transform: translate(-50%, -100%) rotate(288deg); }
-			.petal10 { transform: translate(-50%, -100%) rotate(324deg); }
-			
-			/* Text Animation */
-			.text {
-				font-size: 2em;
-				color: white;
-				font-weight: bold;
-				margin-bottom: 20px;
-				animation: moveText 5s ease-in-out infinite;
-			}
-			@keyframes moveText {
-				0% {
-					transform: translateX(-100%);
-				}
-				50% {
-					transform: translateX(0);
-				}
-				100% {
-					transform: translateX(100%);
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<div class="text"> มันไม่เหม็นสำหรับผม </div> <!-- Animated text -->
-		<div class="wrapper">
-			<div class="petal petal1"></div>
-			<div class="petal petal2"></div>
-			<div class="petal petal3"></div>
-			<div class="petal petal4"></div>
-			<div class="petal petal5"></div>
-			<div class="petal petal6"></div>
-			<div class="petal petal7"></div>
-			<div class="petal petal8"></div>
-			<div class="petal petal9"></div>
-			<div class="petal petal10"></div>
-			<div class="miolo"></div>
-		</div>
-	</body>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ควบคุมปืน</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background-color: #f8f8f8;
+      box-sizing: border-box;
+    }
+    #gun-label {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .control-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+      margin: 20px 0;
+    }
+    #joystick-zone {
+      width: 200px;
+      height: 200px;
+      background: #ddd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+    .control-btn {
+      font-size: 16px;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .control-btn:hover {
+      opacity: 0.9;
+    }
+    .control-btn.fire {
+      padding: 16px 40px;
+      font-size: 18px;
+      width: 160px;
+      background-color: #e53935;
+    }
+    .control-btn.fire.active {
+      background-color: #43a047;
+    }
+    .control-btn.hold {
+      padding: 10px 20px;
+      width: 120px;
+      background-color: #4285f4;
+    }
+    .control-btn.hold.active {
+      background-color: #f9a825;
+    }
+    .control-btn.lock {
+      padding: 10px 20px;
+      width: 120px;
+      background-color: #9e9e9e;
+    }
+    .control-btn.lock.active {
+      background-color: #f57c00;
+    }
+    .top-right-status {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 999;
+    }
+    .fullscreen-toggle {
+      padding: 6px 12px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #666;
+      color: white;
+    }
+    #status {
+      font-size: 12px;
+      color: #fff;
+      background: #888;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    #water-level {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.9.0/dist/nipplejs.min.js"></script>
+</head>
+<body>
+  <div class="top-right-status">
+    <button class="fullscreen-toggle" onclick="toggleFullscreen()" id="fullscreenBtn">เข้าเต็มจอ</button>
+    <div id="status">🔌 กำลังเชื่อมต่อ ESP32...</div>
+  </div>
+
+  <div id="gun-label">GUN A</div>
+<div style="margin-bottom: 10px;">
+  <button class="control-btn" style="background-color: #555; padding: 6px 16px; margin: 4px;" onclick="switchGun('gunA')">สลับเป็น GUN A</button>
+  <button class="control-btn" style="background-color: #555; padding: 6px 16px; margin: 4px;" onclick="switchGun('gunB')">สลับเป็น GUN B</button>
+</div>
+
+  <div class="control-container">
+    <div id="joystick-zone"></div>
+    <div class="button-group">
+      <button class="control-btn fire" id="fireBtn"
+        onmousedown="firePress(true)" onmouseup="firePress(false)"
+        ontouchstart="firePress(true)" ontouchend="firePress(false)">ยิง</button>
+
+      <button class="control-btn hold" onclick="toggleHoldFire()" ontouchstart="event.preventDefault(); toggleHoldFire();" id="holdBtn">ยิงค้าง</button>
+
+      <button class="control-btn lock" onclick="toggleLock()" ontouchstart="event.preventDefault(); toggleLock();" id="lockBtn">ล็อกมุมยิง</button>
+    </div>
+  </div>
+
+  <div id="water-level">ระดับน้ำ: --%</div>
+<div id="gps-coordinates" style="margin-top: 10px; font-size: 14px; color: #555;"></div>
+
+  <script>
+function switchGun(id) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('id', id);
+  window.location.href = url.toString();
+}
+
+const params = new URLSearchParams(window.location.search);
+let gunId = params.get('id') || 'gunA';
+document.getElementById('gun-label').textContent = gunId.toUpperCase();
+
+let isHoldingA = false;
+let isHoldingB = false;
+let isFireLocked = false;
+let isHoldLockedA = false;
+let isHoldLockedB = false;
+let isFullscreen = false;
+let isLocked = false;
+
+const socket = new WebSocket("ws://192.168.1.22:81");
+const statusEl = document.getElementById("status");
+
+socket.onopen = () => {
+  statusEl.textContent = "✅ เชื่อมต่อ ESP32 แล้ว (192.168.1.22)";
+};
+
+socket.onclose = () => {
+  statusEl.textContent = "❌ การเชื่อมต่อกับ ESP32 ถูกตัด";
+};
+
+socket.onerror = err => {
+  statusEl.textContent = "⚠️ มีข้อผิดพลาดในการเชื่อมต่อ ESP32";
+};
+
+socket.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data?.action === 'holdStatus') {
+  const holdBtn = document.getElementById('holdBtn');
+  if (data.id === 'gunA') {
+    isHoldLockedA = false;
+    isHoldingA = data.state;
+    if (gunId === 'gunA') {
+      holdBtn.textContent = isHoldingA ? 'หยุดยิง' : 'ยิงค้าง';
+      holdBtn.classList.toggle('active', isHoldingA);
+    }
+  }
+  if (data.id === 'gunB') {
+    isHoldLockedB = false;
+    isHoldingB = data.state;
+    if (gunId === 'gunB') {
+      holdBtn.textContent = isHoldingB ? 'หยุดยิง' : 'ยิงค้าง';
+      holdBtn.classList.toggle('active', isHoldingB);
+    }
+  }
+}
+  if (data?.type === 'water') {
+  document.getElementById('water-level').textContent = `ระดับน้ำ: ${data.level}%`;
+}
+};
+
+function sendCommand(action, data = {}) {
+  const payload = {
+    id: gunId,
+    action,
+    ...data
+  };
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(payload));
+  }
+}
+
+function firePress(isPressed) {
+  const fireBtn = document.getElementById('fireBtn');
+  if (isPressed) {
+    if (isFireLocked) return;
+    isFireLocked = true;
+    sendCommand('fire');
+    fireBtn.classList.add('active');
+    setTimeout(() => { isFireLocked = false; }, 150); // 🔐 ล็อก 150ms
+  } else {
+    sendCommand('stop');
+    fireBtn.classList.remove('active');
+  }
+}
+
+function toggleHoldFire() {
+  const holdBtn = document.getElementById('holdBtn');
+  const isLocked = gunId === 'gunA' ? isHoldLockedA : isHoldLockedB;
+  if (isLocked) return;
+  if (gunId === 'gunA') isHoldLockedA = true;
+  if (gunId === 'gunB') isHoldLockedB = true;
+  sendCommand('hold');
+}
+
+function toggleLock() {
+  isLocked = !isLocked;
+  const lockBtn = document.getElementById('lockBtn');
+  lockBtn.textContent = isLocked ? 'ปลดล็อกมุมยิง' : 'ล็อกมุมยิง';
+  lockBtn.classList.toggle('active', isLocked);
+}
+
+function toggleFullscreen() {
+  const el = document.documentElement;
+  const btn = document.getElementById('fullscreenBtn');
+  if (!isFullscreen) {
+    el.requestFullscreen?.() || el.webkitRequestFullscreen?.() || el.msRequestFullscreen?.();
+    btn.textContent = 'ออกจากเต็มจอ';
+  } else {
+    document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
+    btn.textContent = 'เข้าเต็มจอ';
+  }
+  isFullscreen = !isFullscreen;
+}
+
+const joystick = nipplejs.create({
+  zone: document.getElementById('joystick-zone'),
+  mode: 'static',
+  position: { left: '50%', top: '50%' },
+  color: 'blue',
+  size: 150
+});
+
+let lastMoveTime = 0;
+joystick.on('move', (evt, data) => {
+  if (isLocked) return;
+  const now = Date.now();
+  if (now - lastMoveTime < 50) return; // ✅ จำกัดความถี่ 50ms
+  lastMoveTime = now;
+
+  if (data?.vector) {
+    const x = +data.vector.x.toFixed(2);
+    const y = +data.vector.y.toFixed(2);
+    sendCommand('move', { x, y });
+  }
+});
+
+joystick.on('end', () => {
+  if (!isLocked) {
+    sendCommand('move', { x: 0, y: 0 });
+  }
+});
+
+// ขอพิกัด GPS จากโทรศัพท์
+let lastGpsSent = 0;
+navigator.geolocation?.watchPosition(
+  (pos) => {
+    const now = Date.now();
+    if (now - lastGpsSent < 60000) return; // ส่งทุก 60 วิ
+    lastGpsSent = now;
+
+    const { latitude, longitude } = pos.coords;
+    sendCommand('gps', { lat: latitude, lon: longitude });
+
+    const coordEl = document.getElementById('gps-coordinates');
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`, {
+      headers: {
+        'Accept-Language': 'th'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        const address = data.address;
+        const locationName = `${address.hamlet || address.village || address.suburb || ''} ${address.county || address.town || address.city || ''} ${address.state || address.province || address.region || ''}`.trim();
+        if (locationName) {
+          coordEl.textContent = `📌 ${locationName}`;
+        }
+      })
+      .catch(() => {
+        coordEl.textContent = '📌 ไม่สามารถระบุชื่อสถานที่ได้';
+      });
+  },
+  (err) => {
+    document.getElementById('gps-coordinates').textContent = '📍 ไม่สามารถดึงพิกัดได้';
+  },
+  { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+);
+</script>
+</body>
 </html>
